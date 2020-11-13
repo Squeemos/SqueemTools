@@ -1,18 +1,24 @@
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
+from scipy.stats import entropy
 
 class FCM(object):
     '''Class for Fuzzy C-Means. Currently best suited with Pandas DataFrames for data.'''
-    def __init__(self,data,c,dim,m=2,maxiter=100,genCentroids=False,distFunc=False):
+    def __init__(self,data,c,m=2,maxiter=100,genCentroids=False,distFunc=False):
         '''data is data you want to cluster, c is number of clusters, m is dimensionality of data'''
-        self._data = data       # Data to cluster on
-        self._iter = maxiter    # Max iterations
-        self._c = c             # Number of clusters
-        self._n = len(data)     # Number of items in data set
-        self._dim = dim         # Dimensionality of the data set
-        self._m = m             # Fuzzifier
-        self._A = np.zeros((self._n,self._c))
+        self._data = data        # Data to cluster on
+        self._iter = maxiter     # Max iterations
+        self._c = c              # Number of clusters
+        self._n = len(data)      # Number of items in data set
+        self._m = m              # Fuzzifier
+        self._A = np.zeros((self._n,self._c)) # Membership matrix
+
+        # Get dimensionality of data set
+        if isinstance(data,pd.DataFrame):
+            self._dim = len(data.iloc[0])
+        elif isinstance(data,np.ndarray):
+            self._dim = len(data[0])
 
         # Sample centroids from data
         if isinstance(genCentroids,bool):
@@ -45,7 +51,7 @@ class FCM(object):
                 for k in range(self._n):
                     for i in range(self._c):
                         #calculate distance
-                        DTC[k,i] = self._distFunc(self._data.iloc[k],self._centroids.iloc[i],self._dim) #dimensionality m
+                        DTC[k,i] = self._distFunc(self._data.iloc[k],self._centroids.iloc[i]) #dimensionality m
                 #Update A with membership
                 for i in range(self._c):
                     for k in range(self._n):
@@ -82,19 +88,23 @@ class FCM(object):
     # De-Fuzzify the data and assign each point to a centroid
     def classify(self,how='max',threshold='.6'):
         '''Classify each point in the data set with it's membership to the centroids'''
-        ownership = [0 for x in range(self._n)]
-        for x in range(self._n):
-            ownership[x] = list(self._A[x]).index(max(self._A[x]))
-        return ownership
+        return np.array([list(self._A[x]).index(max(self._A[x])) for x in range(self._n)])
 
-    # Simple distance formula
-    def __SimpleEuclidean(a,b,dim):
-        '''Calculates distance with Euclidean Distance. Treats the points a and b as an dim-dimensional array.'''
-        distance = 0
-        for i in range(dim):
-            distance += (a[i] - b[i]) ** 2
-        return np.sqrt(distance)
+    def calculate_entropy(self):
+        '''Calculates how much entropy there is in the membership matrix'''
+        amounts = {'<.5' : 0, '<1' : 0, '>1' : 0, '>1.5' : 0}
+        ent = np.array([entropy(x,base=2) for x in self._A])
+        for e in ent:
+            if e <= .5:
+                amounts['<.5'] += 1
+            elif e <= 1 and e > .5:
+                amounts['<1'] += 1
+            elif e > 1 and e < 1.5:
+                amounts['>1'] += 1
+            elif e > 1.5:
+                amounts['>1.5'] += 1
+        return ent.mean(), amounts
 
-    def __l2Distance(a,b,dim=True):
+    def __l2Distance(a,b):
         '''Calculates l2 distance between a and b'''
         return np.linalg.norm(a-b)
