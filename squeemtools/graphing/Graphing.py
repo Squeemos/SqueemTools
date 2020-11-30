@@ -49,7 +49,6 @@ def MakeBigGraph(dataset,buffer=0,areaofInterest=None):
     for x in range(len(a0)):
         #m.scatter(x0[x],y0[x],zorder=3,c='blue',marker='D')
         radius = GetRadius(dataset.flash_area.values[x])
-        radius /= 2
         #ax.add_artist(Circle((x0[x],y0[x]),radius/5,alpha=a0[x],color='yellow'))
         extent=[x0[x] - radius, x0[x] + radius, y0[x] - radius, y0[x] + radius]
         aimg = img.copy()
@@ -93,7 +92,6 @@ def MakeBigGraph(dataset,buffer=0,areaofInterest=None):
         for x in range(len(a0)):
             #m.scatter(x0[x],y0[x],zorder=3,c='blue',marker='D')
             radius = GetRadius(dataset.flash_area.values[x])
-            radius /= 2
             #ax.add_artist(Circle((x0[x],y0[x]),radius/5,alpha=a0[x],color='yellow'))
             extent=[x0[x] - radius, x0[x] + radius, y0[x] - radius, y0[x] + radius]
             aimg = img.copy()
