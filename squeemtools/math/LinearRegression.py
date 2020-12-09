@@ -1,5 +1,5 @@
 import numpy as np
-from Helpers import Augment
+from .Helpers import Augment
 
 def LinearRegression(X,Y,verbose=False):
     '''X is the input, Y is the output'''

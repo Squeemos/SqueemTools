@@ -8,7 +8,7 @@ setup(
   author = 'Ben van Oostendorp',
   author_email = 'ben.vano@digipen.edu',
   url = 'https://github.com/Squeemos/SqueemTools',   # Provide either the link to your github or to your website
-  download_url = 'https://github.com/Squeemos/SqueemTools/archive/SqueemTools_1.1.0.tar.gz',    # I explain this later on
+  download_url = 'https://github.com/Squeemos/SqueemTools/archive/SqueemTools_1.1.1.tar.gz',    # I explain this later on
   keywords = ['GRAPHING', 'FUZZY C MEANS','GLM', 'ID3'],
   install_requires=[
           'matplotlib',

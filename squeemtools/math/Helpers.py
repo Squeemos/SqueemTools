@@ -12,3 +12,6 @@ def UndoAugment(X):
         return X[1:]
     else:
         return np.delete(X,0,1)
+
+def cross_sum(n):
+    return sum(list(map(int, str(n).strip())))
