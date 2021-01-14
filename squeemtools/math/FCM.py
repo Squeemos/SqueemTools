@@ -45,6 +45,7 @@ class FCM(object):
     def fit(self):
         '''Runs the algorithm on the data provided during construction. Uses the distance function to calculate distance. Returns the centroids'''
         with np.errstate(divide='ignore',invalid='ignore'):
+            exponent = (2/(self._m-1))
             for iteration in range(self._iter):
                 #Assignment Step
                 DTC = np.zeros((self._n,self._c))
@@ -57,10 +58,7 @@ class FCM(object):
                     for k in range(self._n):
                         sum = 0
                         for j in range(self._c):
-                            if self._m == 2:
-                                sum += (DTC[k,i]/DTC[k,j]) ** 2 #parameter m
-                            else:
-                                sum += (DTC[k,i]/DTC[k,j]) ** (2/(self._m-1)) #parameter m
+                            sum += (DTC[k,i]/DTC[k,j]) ** exponent #parameter m
                         self._A[k,i] = 1/sum
                 self._A[np.isnan(self._A)] = 0
                 #Update
